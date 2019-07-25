@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switch_doctor_mode"
+        android:text="Doctor Mode"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="50dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="25dp"
+        android:layout_width="wrap_content"
+        android:checked="false"
+        android:textSize="26dp"
+        android:textColor="@color/orange"
+        android:textStyle="bold"
+        android:textOff="OFF"
+        android:textOn="ON"
+        android:thumb="@drawable/switch_custom_selector"
+        android:layout_height="wrap_content"
+        app:showText="true"
+        app:track="@drawable/switch_custom_track"/>
+</RelativeLayout>
