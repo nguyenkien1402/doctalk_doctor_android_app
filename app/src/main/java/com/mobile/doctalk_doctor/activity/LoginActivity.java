@@ -16,6 +16,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.mobile.doctalk_doctor.R;
 import com.mobile.doctalk_doctor.api_controller.DoctorController;
 import com.mobile.doctalk_doctor.utility.Message;
@@ -93,6 +96,24 @@ public class LoginActivity extends AppCompatActivity {
                         }else{
                             Toast.makeText(getApplicationContext(),"Cannot login to Firebase server",Toast.LENGTH_SHORT).show();
                         }
+                    }
+                });
+
+        // Subscribe to listening the request
+        FirebaseMessaging.getInstance().subscribeToTopic("doctor_"+edUsername.getText().toString());
+        FirebaseMessaging.getInstance().subscribeToTopic("doctor");
+        FirebaseMessaging.getInstance().subscribeToTopic("all");
+
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if(!task.isSuccessful()){
+                            Log.d("LoginActivity",task.getException().toString());
+                            return;
+                        }
+                        String token = task.getResult().getToken();
+                        Log.d("LoginActivity","Firebase Token: " + token);
                     }
                 });
     }

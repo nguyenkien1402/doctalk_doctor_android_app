@@ -37,8 +37,10 @@ dependencies {
     //Firebase
     implementation 'com.google.firebase:firebase-core:17.0.1'
     implementation 'com.google.firebase:firebase-auth:18.1.0'
-    implementation 'com.google.firebase:firebase-database:18.0.0'
-    implementation 'com.google.firebase:firebase-storage:18.1.0'
+    implementation 'com.google.firebase:firebase-database:18.0.1'
+    implementation 'com.google.firebase:firebase-storage:18.1.1'
+    implementation 'com.google.firebase:firebase-messaging:19.0.1'
+    implementation 'com.squareup.picasso:picasso:2.71828'
 
     // GSON and Retrofit library
     implementation 'com.google.code.gson:gson:2.8.5'

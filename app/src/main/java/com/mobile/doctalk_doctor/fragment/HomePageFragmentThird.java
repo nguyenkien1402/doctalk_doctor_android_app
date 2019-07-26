@@ -41,6 +41,10 @@ public class HomePageFragmentThird extends Fragment {
         SharedPreferences pref = getContext().getSharedPreferences(Message.SHAREPREFECES_DOCTOR_INFO, Context.MODE_PRIVATE);
         final int doctorId = pref.getInt("DoctorId",0);
         token = pref.getString("Token",null);
+        //Get activated mode from share preferences
+        if(pref.contains("Activated")){
+            doctorMode.setChecked(pref.getBoolean("Activated",false));
+        }
         doctorMode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
