@@ -91,31 +91,33 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
-                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                            startActivity(intent);
+                            FirebaseMessaging.getInstance().subscribeToTopic("doctor_"+edUsername.getText().toString());
+                            FirebaseMessaging.getInstance().subscribeToTopic("doctor");
+                            FirebaseMessaging.getInstance().subscribeToTopic("all");
+
+                            FirebaseInstanceId.getInstance().getInstanceId()
+                                    .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                                            if(!task.isSuccessful()){
+                                                Log.d("LoginActivity",task.getException().toString());
+                                                return;
+                                            }
+                                            String token = task.getResult().getToken();
+                                            Log.d("LoginActivity","Firebase Token: " + token);
+                                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                            startActivity(intent);
+                                        }
+                                    });
                         }else{
                             Toast.makeText(getApplicationContext(),"Cannot login to Firebase server",Toast.LENGTH_SHORT).show();
+                            return;
                         }
                     }
                 });
 
         // Subscribe to listening the request
-        FirebaseMessaging.getInstance().subscribeToTopic("doctor_"+edUsername.getText().toString());
-        FirebaseMessaging.getInstance().subscribeToTopic("doctor");
-        FirebaseMessaging.getInstance().subscribeToTopic("all");
 
-        FirebaseInstanceId.getInstance().getInstanceId()
-                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                        if(!task.isSuccessful()){
-                            Log.d("LoginActivity",task.getException().toString());
-                            return;
-                        }
-                        String token = task.getResult().getToken();
-                        Log.d("LoginActivity","Firebase Token: " + token);
-                    }
-                });
     }
 
     public void signup(View view){

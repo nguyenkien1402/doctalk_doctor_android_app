@@ -67,9 +67,9 @@
                 android:onClick="forgotpassword"
                 android:textSize="16sp" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_app_login"
-                style="@style/SolidButtonStyle"
+                style="@style/CommonButtonUnlabled"
                 android:layout_width="match_parent"
                 android:layout_below="@id/forgot_password"
                 android:layout_marginTop="@dimen/layout_in_between_margins"

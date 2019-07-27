@@ -6,9 +6,48 @@
     android:layout_height="match_parent"
     tools:context=".activity.NotificationActivity">
 
-    <TextView
-        android:text="Hello"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <ScrollView
+        android:fillViewport="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:textSize="20dp"
+                android:id="@+id/noti_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+
+            <RelativeLayout
+                android:layout_marginBottom="30dp"
+                android:layout_alignParentBottom="true"
+                android:layout_width="match_parent"
+                android:layout_marginLeft="50dp"
+                android:layout_marginRight="50dp"
+                android:layout_height="60dp">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_noti_reject"
+                    android:layout_width="130dp"
+                    android:layout_height="match_parent"
+                    android:text="Reject"
+                    android:textSize="14sp"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_noti_accept"
+                    android:layout_width="130dp"
+                    android:text="Accept"
+                    android:textSize="14sp"
+                    style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                    android:layout_height="match_parent"
+                    android:layout_alignRight="@id/btn_noti_reject"
+                    android:layout_alignParentRight="true"/>
+            </RelativeLayout>
+        </RelativeLayout>
+    </ScrollView>
 </RelativeLayout>
