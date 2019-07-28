@@ -71,7 +71,7 @@ public class LoginActivity extends AppCompatActivity {
                     String email = result.getString("email");
                     SavingLocalData.saveInSharePreferences(getApplicationContext(),Message.SHAREPREFECES_DOCTOR_INFO,"UserId",userId);
                     SavingLocalData.saveInSharePreferences(getApplicationContext(),Message.SHAREPREFECES_DOCTOR_INFO,"Email",email);
-                    signinWithFirebase(email,edPassword.getText().toString());
+                    signinWithFirebase(userId,email,edPassword.getText().toString());
                 }catch (Exception e){
                     Log.d("Error",e.getMessage());
                 }
@@ -84,14 +84,14 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private void signinWithFirebase(String email, String password){
+    private void signinWithFirebase(final String userId, String email, String password){
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         mAuth.signInWithEmailAndPassword(email,password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
-                            FirebaseMessaging.getInstance().subscribeToTopic("doctor_"+edUsername.getText().toString());
+                            FirebaseMessaging.getInstance().subscribeToTopic("doctor_"+userId);
                             FirebaseMessaging.getInstance().subscribeToTopic("doctor");
                             FirebaseMessaging.getInstance().subscribeToTopic("all");
 
@@ -115,9 +115,6 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     }
                 });
-
-        // Subscribe to listening the request
-
     }
 
     public void signup(View view){

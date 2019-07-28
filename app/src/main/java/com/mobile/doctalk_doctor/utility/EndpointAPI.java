@@ -10,4 +10,9 @@ public class EndpointAPI {
     public static String get_doctor_info = application_url + "api/doctors/userId/";
     public static String get_doctor_activate_session = application_url + "api/doctor/session/activate";
 
+    public static String get_request_cancellation = application_url + "api/requestcancel/cancelby";
+
+    // Firebase messaging service
+    public static String firebase_push_notification = "https://fcm.googleapis.com/fcm/send";
+
 }

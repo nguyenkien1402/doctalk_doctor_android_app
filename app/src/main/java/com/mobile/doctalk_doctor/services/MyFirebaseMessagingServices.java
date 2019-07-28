@@ -29,6 +29,9 @@ import com.mobile.doctalk_doctor.utility.Config;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
+import org.json.JSONArray;
+
+import java.util.Collections;
 import java.util.Map;
 
 
@@ -36,6 +39,7 @@ public class MyFirebaseMessagingServices extends FirebaseMessagingService {
 
     private static final String TAG = "FirebaseMS";
     private String message = "";
+
     Target target = new Target() {
         @Override
         public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
@@ -122,25 +126,34 @@ public class MyFirebaseMessagingServices extends FirebaseMessagingService {
     }
 
     private void getImage(final RemoteMessage remoteMessage) {
+        try{
+            Map<String, String> data = remoteMessage.getData();
+            Config.id = Integer.parseInt(data.get("id"));
+            Config.title = data.get("title");
+            Config.content = data.get("content");
+            Config.imageUrl = data.get("imageUrl");
+            Config.gameUrl = data.get("gameUrl");
+            JSONArray array = new JSONArray(data.get("userId"));
+            for(int i = 0 ; i < array.length() ; i++){
+                Config.userIds.add(array.getString(i));
+            }
+            //Create thread to fetch image from notification
+            if(remoteMessage.getData()!=null){
 
-        Map<String, String> data = remoteMessage.getData();
-        Config.title = data.get("title");
-        Config.content = data.get("content");
-        Config.imageUrl = data.get("imageUrl");
-        Config.gameUrl = data.get("gameUrl");
-        //Create thread to fetch image from notification
-        if(remoteMessage.getData()!=null){
-
-            Handler uiHandler = new Handler(Looper.getMainLooper());
-            uiHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    // Get image from data Notification
-                    Picasso.get()
-                            .load(Config.imageUrl)
-                            .into(target);
-                }
-            }) ;
+                Handler uiHandler = new Handler(Looper.getMainLooper());
+                uiHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Get image from data Notification
+                        Picasso.get()
+                                .load(Config.imageUrl)
+                                .into(target);
+                    }
+                }) ;
+            }
+        }catch (Exception e){
+            Log.d(TAG,e.getMessage());
         }
+
     }
 }
