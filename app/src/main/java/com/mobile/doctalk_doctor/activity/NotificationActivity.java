@@ -9,6 +9,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -18,7 +19,6 @@ import com.microsoft.signalr.HubConnectionBuilder;
 import com.microsoft.signalr.HubConnectionState;
 import com.mobile.doctalk_doctor.R;
 import com.mobile.doctalk_doctor.api_controller.DoctorController;
-import com.mobile.doctalk_doctor.model.Doctor;
 import com.mobile.doctalk_doctor.utility.Config;
 import com.mobile.doctalk_doctor.utility.Message;
 import com.mobile.doctalk_doctor.utility.UtilityFunction;
@@ -35,7 +35,7 @@ public class NotificationActivity extends AppCompatActivity {
     private Ringtone defaultRingtone;
     private int doctorId;
     private int requestId;
-    private HubConnection hubConnection;
+    HubConnection hubConnection;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,8 +43,6 @@ public class NotificationActivity extends AppCompatActivity {
         content = (TextView) findViewById(R.id.noti_text_view);
         btnReject = (Button) findViewById(R.id.btn_noti_reject);
         btnAccept = (Button) findViewById(R.id.btn_noti_accept);
-
-        hubConnection = HubConnectionBuilder.create("http://192.168.132.1:5001/searchingdoctorhub").build();
 
         // set ringtone
         Uri ringtoneUri = RingtoneManager.getActualDefaultRingtoneUri(this,RingtoneManager.TYPE_RINGTONE);
@@ -56,26 +54,30 @@ public class NotificationActivity extends AppCompatActivity {
         token = pref.getString("Token",null);
         doctorId = pref.getInt("DoctorId",0);
         userId = pref.getString("UserId",null);
-
         requestId = Config.id;
+
+        Log.d("Notic",token +"/" + doctorId +"/"+userId);
         String not = Config.title + "\n" + Config.content + "\n" + Config.imageUrl + "\n" + Config.gameUrl;
-        final List<String> userId = Config.userIds;
-        for(int i = 0 ; i < userId.size() ; i++){
-            not = not + userId.get(i) + " ";
-        }
         content.setText(not);
+
+        hubConnection = HubConnectionBuilder.create("http://192.168.132.1:5001/searchingdoctorhub").build();
+        if(hubConnection.getConnectionState() == HubConnectionState.DISCONNECTED)
+            hubConnection.start();
         btnReject.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 defaultRingtone.stop();
-                SendNotiToDoctorAsync sendNotiToDoctorAsync = new SendNotiToDoctorAsync();
+                /*SendNotiToDoctorAsync sendNotiToDoctorAsync = new SendNotiToDoctorAsync();
                 sendNotiToDoctorAsync.execute();
                 RequestCancellationAsync requestCancellation = new RequestCancellationAsync();
-                requestCancellation.execute();
+                requestCancellation.execute();*/
+
+                // userId here play a role as a doctorId
                 if(hubConnection.getConnectionState() == HubConnectionState.DISCONNECTED)
                     hubConnection.start();
                 if(hubConnection.getConnectionState() == HubConnectionState.CONNECTED)
-                    hubConnection.send("GettingDoctorResponse",1005,"d31eac6d-6849-49b4-be3c-d05a25a3d8c4",userId,0);
+                    hubConnection.send("GettingDoctorResponse",requestId,Config.patientId,userId,0);
+                hubConnection.stop();
                 finish();
             }
         });
@@ -87,8 +89,9 @@ public class NotificationActivity extends AppCompatActivity {
                 if(hubConnection.getConnectionState() == HubConnectionState.DISCONNECTED)
                     hubConnection.start();
                 if(hubConnection.getConnectionState() == HubConnectionState.CONNECTED)
-                    hubConnection.send("GettingDoctorResponse",1005,"d31eac6d-6849-49b4-be3c-d05a25a3d8c4",userId,1);
-//                finish();
+                    hubConnection.send("GettingDoctorResponse",requestId,Config.patientId,userId,1);
+                hubConnection.stop();
+               finish();
             }
         });
     }
@@ -106,7 +109,9 @@ public class NotificationActivity extends AppCompatActivity {
             UtilityFunction.ShowToast(getApplicationContext(),jsonObject.toString());
         }
     }
-    private class SendNotiToDoctorAsync extends AsyncTask<Void, Void ,Boolean>{
+
+
+    /*private class SendNotiToDoctorAsync extends AsyncTask<Void, Void ,Boolean>{
         @Override
         protected Boolean doInBackground(Void... voids) {
 
@@ -123,5 +128,5 @@ public class NotificationActivity extends AppCompatActivity {
             }
 //            finish();
         }
-    }
+    }*/
 }

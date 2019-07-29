@@ -133,10 +133,7 @@ public class MyFirebaseMessagingServices extends FirebaseMessagingService {
             Config.content = data.get("content");
             Config.imageUrl = data.get("imageUrl");
             Config.gameUrl = data.get("gameUrl");
-            JSONArray array = new JSONArray(data.get("userId"));
-            for(int i = 0 ; i < array.length() ; i++){
-                Config.userIds.add(array.getString(i));
-            }
+            Config.patientId = data.get("patientId");
             //Create thread to fetch image from notification
             if(remoteMessage.getData()!=null){
 

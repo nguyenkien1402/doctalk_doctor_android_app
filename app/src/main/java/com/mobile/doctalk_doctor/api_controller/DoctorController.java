@@ -7,12 +7,8 @@ import com.google.gson.Gson;
 import com.mobile.doctalk_doctor.model.Doctor;
 import com.mobile.doctalk_doctor.utility.Config;
 import com.mobile.doctalk_doctor.utility.EndpointAPI;
-import com.mobile.doctalk_doctor.utility.UtilityFunction;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import java.util.zip.CheckedOutputStream;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -123,7 +119,8 @@ public class DoctorController {
         return null;
     }
 
-    public static boolean RejectAndSendNotification(){
+
+    /*public static boolean RejectAndSendNotification(){
         Config.userIds.remove(0);
         JSONObject notic = new JSONObject();
         JSONObject data = new JSONObject();
@@ -166,7 +163,7 @@ public class DoctorController {
             Log.d(TAG, e.getMessage());
         }
         return false;
-    }
+    }*/
 
 
     public static JSONObject RequestCancellation(String token, int doctorId, int requestId){

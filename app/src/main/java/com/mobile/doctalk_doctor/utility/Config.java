@@ -10,6 +10,6 @@ public class Config {
     public static String title = "";
     public static String imageUrl = "";
     public static String gameUrl = "";
-    public static List<String> userIds= new ArrayList<String>();
+    public static String patientId  = "";
 
 }
