@@ -19,10 +19,12 @@ import com.microsoft.signalr.HubConnectionBuilder;
 import com.microsoft.signalr.HubConnectionState;
 import com.mobile.doctalk_doctor.R;
 import com.mobile.doctalk_doctor.api_controller.DoctorController;
+import com.mobile.doctalk_doctor.api_controller.RequestConsultController;
 import com.mobile.doctalk_doctor.utility.Config;
 import com.mobile.doctalk_doctor.utility.Message;
 import com.mobile.doctalk_doctor.utility.UtilityFunction;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
@@ -67,16 +69,15 @@ public class NotificationActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 defaultRingtone.stop();
-                /*SendNotiToDoctorAsync sendNotiToDoctorAsync = new SendNotiToDoctorAsync();
-                sendNotiToDoctorAsync.execute();
-                RequestCancellationAsync requestCancellation = new RequestCancellationAsync();
-                requestCancellation.execute();*/
 
                 // userId here play a role as a doctorId
                 if(hubConnection.getConnectionState() == HubConnectionState.DISCONNECTED)
                     hubConnection.start();
                 if(hubConnection.getConnectionState() == HubConnectionState.CONNECTED)
                     hubConnection.send("GettingDoctorResponse",requestId,Config.patientId,userId,0);
+                // Save reject to the database
+                RequestCancellationAsync requestCancellationAsync = new RequestCancellationAsync();
+                requestCancellationAsync.execute();
                 hubConnection.stop();
                 finish();
             }
@@ -90,43 +91,50 @@ public class NotificationActivity extends AppCompatActivity {
                     hubConnection.start();
                 if(hubConnection.getConnectionState() == HubConnectionState.CONNECTED)
                     hubConnection.send("GettingDoctorResponse",requestId,Config.patientId,userId,1);
+                // Accept request, go to the Chat session.
+                // Save the session first, after save to the database, direct to chat window
+                RequestAcceptAsync requestAcceptAsync = new RequestAcceptAsync();
+                requestAcceptAsync.execute();
+
                 hubConnection.stop();
                finish();
             }
         });
     }
 
-    private class RequestCancellationAsync extends AsyncTask<Void, Void, JSONObject>{
+    private class RequestCancellationAsync extends AsyncTask<Void, Void, Boolean>{
 
         @Override
+        protected Boolean doInBackground(Void... voids) {
+            return RequestConsultController.RequestCancellation(token,doctorId,requestId);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean jsonObject) {
+            super.onPostExecute(jsonObject);
+            UtilityFunction.ShowToast(getApplicationContext(),"Cancel request successfully");
+        }
+    }
+
+
+    private class RequestAcceptAsync extends AsyncTask<Void, Void, JSONObject>{
+        @Override
         protected JSONObject doInBackground(Void... voids) {
-            return DoctorController.RequestCancellation(token,doctorId,requestId);
+            return RequestConsultController.acceptRequest(token, doctorId, requestId);
         }
 
         @Override
         protected void onPostExecute(JSONObject jsonObject) {
             super.onPostExecute(jsonObject);
-            UtilityFunction.ShowToast(getApplicationContext(),jsonObject.toString());
+            try{
+                int sessionId = jsonObject.getInt("id");
+                Intent intent = new Intent(getApplicationContext(), DemoAcceptChatActivity.class);
+                intent.putExtra("SessionId",sessionId);
+                startActivity(intent);
+            }catch (JSONException e){
+                Log.d("NotiActivity",e.getMessage());
+            }
+
         }
     }
-
-
-    /*private class SendNotiToDoctorAsync extends AsyncTask<Void, Void ,Boolean>{
-        @Override
-        protected Boolean doInBackground(Void... voids) {
-
-            return DoctorController.RejectAndSendNotification();
-        }
-
-        @Override
-        protected void onPostExecute(Boolean aBoolean) {
-            super.onPostExecute(aBoolean);
-            if(aBoolean){
-                UtilityFunction.ShowToast(getApplicationContext(),"Send to another doctor successfully");
-            }else{
-                UtilityFunction.ShowToast(getApplicationContext(),"Failed to send to another doctor");
-            }
-//            finish();
-        }
-    }*/
 }

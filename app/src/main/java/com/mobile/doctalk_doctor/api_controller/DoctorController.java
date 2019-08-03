@@ -166,22 +166,5 @@ public class DoctorController {
     }*/
 
 
-    public static JSONObject RequestCancellation(String token, int doctorId, int requestId){
-        OkHttpClient okHttpClient = new OkHttpClient();
-        String url = EndpointAPI.get_request_cancellation+"?doctorId="+doctorId+"&requestId="+requestId;
-        Request request = new Request.Builder()
-                .url(url)
-                .get()
-                .addHeader("Content-Type","application/json")
-                .addHeader("Authorization","Bearer "+token)
-                .build();
-        try{
-            Response response = okHttpClient.newCall(request).execute();
-            JSONObject result = new JSONObject(response.body().string());
-            return result;
-        }catch (Exception e){
-            Log.d(TAG,e.getMessage());
-        }
-        return null;
-    }
+
 }

@@ -53,6 +53,7 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         protected JSONObject doInBackground(String... strings) {
             String token = DoctorController.login(strings[0],strings[1]);
+            Log.d("Token",token);
             SavingLocalData.saveInSharePreferences(getApplicationContext(), Message.SHAREPREFECES_DOCTOR_INFO,"Token",token);
             JSONObject result = DoctorController.getUserTokenInfo(token);
             if(result != null){
